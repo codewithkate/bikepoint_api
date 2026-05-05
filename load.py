@@ -10,7 +10,7 @@ from pathlib import Path
 log_dir = 'logs'
 os.makedirs(log_dir, exist_ok=True)
 timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-log_filename = f"{log_dir}/load_{timestamp}.log"
+log_filename = f'{log_dir}/load_{timestamp}.log'
 
 logging.basicConfig(
     filename=log_filename,
@@ -25,21 +25,34 @@ logger.info('Logger initialized')
 load_dotenv()
 
 # Store access credentials
-AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-bucket = os.getenv("AWS_BUCKET_NAME")
+AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+bucket = os.getenv('AWS_BUCKET_NAME')
 
 # Create a boto3 client/resource
 s3_client = boto3.client(
-    "s3",
+    's3',
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_KEY
 )
 
+# Upload file to the S3 bucket
 data_dir = Path('data')
 files = list(data_dir.glob('*.json'))
 
+processed = 0
+
 for file in files:
     filename = os.path.basename(file)
-    s3_client.upload_file(file, bucket, filename)
-    logger.info(f"{file} uploaded to S3")
+    try:
+        s3_client.upload_file(file, bucket, filename)
+        logger.info(f'{file} uploaded to S3')
+        s3_client.head_object(Bucket=bucket, Key=filename) # only return metadata
+        os.remove(file)
+        logger.info(f'{file} deleted')
+        processed+=1
+    except Exception as e:
+        logging.error(e)
+
+logging.info(f'{processed} files uploaded')
+
