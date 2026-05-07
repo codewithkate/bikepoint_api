@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 
 def setup_logging(log_dir='logs', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'):
-    """Start a Logger instance
+    """
     This function sets up the logging for all modules. Means we repeat ourselves less. 
 
     Example:
@@ -17,7 +17,7 @@ def setup_logging(log_dir='logs', format='%(asctime)s - %(name)s - %(levelname)s
             logger = logging.getLogger("Main")
             logger = logging.getLogger()
 
-    Params:
+    Args:
         log_dir (str): The filepath where log files will live.
         format (str): Format each log line with a timestamp, name, level, and message
 

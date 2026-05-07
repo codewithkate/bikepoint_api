@@ -16,6 +16,9 @@ def extract(url, max_tries=3, dir='data'):
         url (str): URL to call
         max_tries (int): Number of times to retry if there's a server side error.
         dir (str): Directory to save data to.
+    
+    Returns:
+        bool: True if it works, False if it doesn't.
     '''
     # variables
     url = url
